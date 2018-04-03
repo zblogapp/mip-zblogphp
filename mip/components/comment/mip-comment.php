@@ -4,4 +4,5 @@
 <div class="mip-comments">
 {template:comments}
 </div>
+{template:mip-comment-footer}
 {template:footer}

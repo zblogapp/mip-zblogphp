@@ -10,7 +10,7 @@ function InstallPlugin_mip() {}
 function UninstallPlugin_mip() {}
 
 function mip_CheckIndex() {
-  $components = array('comment');
+  $components = array('comment', 'article_viewnum');
   if (!isset($_GET['mip'])) return;
   $component = GetVars('component', 'GET');
   if (!in_array($component, $components)) return;
@@ -21,7 +21,8 @@ function mip_CheckIndex() {
 
 function mip_Zbp_LoadTemplate(&$templates) {
   $templateList = array(
-    'mip-comment' => '/components/comment/mip-comment.php'
+    'mip-comment' => '/components/comment/mip-comment.php',
+    'mip-comment-footer' => '/components/comment/mip-comment-footer.php'
   );
   foreach ($templateList as $key => $template) {
     if (!isset($templates[$key])) {

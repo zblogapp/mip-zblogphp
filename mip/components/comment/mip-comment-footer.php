@@ -8,11 +8,9 @@
     function resize() {
       postMessage({event: 'resize', height: window.document.body.scrollHeight});
     }
-    window.addEventListener("resize", function () {resize()})
-    window.addEventListener("load", function () {resize()})
+    window.addEventListener("resize", function () { resize() })
+    window.addEventListener("load", function () { resize() })
+    postMessage({event: 'viewnums', id: '{$article.ID}', value: '{$article.ViewNums}'})
   })()
-  window.addEventListener("message", function () {
-
-  }, false);
 
 </script>
