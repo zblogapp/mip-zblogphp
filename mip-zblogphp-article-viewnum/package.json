@@ -11,6 +11,10 @@
     "url": "git+https://github.com/zsxsoft/mip-zblogphp.git"
   },
   "author": "zsx <zsx@zsxsoft.com>",
+  "contributors": [{
+    "name": "zsx",
+    "email": "zsx@zsxsoft.com"
+  }],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/zsxsoft/mip-zblogphp/issues"

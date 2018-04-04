@@ -8,6 +8,10 @@ define(function (require) {
     var updateIdList = [];
     var updateTimeout = null;
 
+    if (!window.zblogphp) {
+        window.zblogphp = {};
+    }
+
     var requestForArticleId = function () {
         var bloghostElement = document.querySelector('meta[name=bloghost]');
         var bloghost = bloghostElement.getAttribute('content');
@@ -80,6 +84,11 @@ define(function (require) {
         }
 
         window.addEventListener('message', onMessageEvent);
+
+        if (window.zblogphp.viewnums) { // receive data from ``comment`` when comment is loaded before this component
+            window.postMessage(window.zblogphp.viewnums, '*');
+        }
+
     };
 
     return customElem;

@@ -8,6 +8,10 @@ define(function (require) {
 
     var attrList = ['allowfullscreen', 'allowtransparency', 'sandbox'];
 
+    if (!window.zblogphp) {
+        window.zblogphp = {};
+    }
+
     customElem.prototype.build = function () {
         var element = this.element;
         var postId = element.getAttribute('post-id') || '1';
@@ -33,7 +37,10 @@ define(function (require) {
                             height: data.height
                         });
                     }
-
+                    break;
+                case 'viewnums': // save viewnums for ``article-viewnums``
+                    window.zblogphp.viewnums = data;
+                    break;
             }
         };
         if (!bloghostElement) {
