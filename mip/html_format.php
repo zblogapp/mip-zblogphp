@@ -16,7 +16,7 @@ function mip_html_format ($content, $style = array()) {
 
 function remove_forbid_tags ($dom) {
   $replaceArray = array('img', 'video', 'audio', 'iframe', 'form');
-  $removeArray = array('frame', 'frameset', 'object', 'param', 'applet', 'embed');
+  $removeArray = array('frame', 'frameset', 'object', 'param', 'applet', 'embed', 'style');
   foreach ($replaceArray as $tag) {
     $items = $dom->find($tag);
     foreach ($items as $item) {

@@ -75,7 +75,7 @@ function mip_format_sidebars ($template, &$styles) {
     foreach ($sidebars as $sidebar) {
       $ret = mip_html_format($sidebar->Content);
       $sidebar->Content = $ret['text'];
-      $styles = $ret['style'];
+      array_merge($styles, $ret['style']);
     }
   }
 }
