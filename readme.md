@@ -2,9 +2,10 @@
 
 ## 目录说明
 
-> mip-zblogphp
-  > mip    -> Z-BlogPHP 支持插件
-  > mip-zblogphp-comment  -> MIP评论组件
+- mip-zblogphp
+  - mip    -> Z-BlogPHP 支持插件
+  - mip-zblogphp-comment  -> MIP评论组件
+  - mip-zblogphp-article-viewnum -> MIP访问量刷新组件
 
 ## 调试说明
 ### Z-BlogPHP插件
