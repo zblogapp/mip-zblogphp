@@ -4,30 +4,45 @@ RegisterPlugin("mip", "ActivePlugin_mip");
 DefinePluginFilter('Filter_Plugin_MIP_Template');
 DefinePluginFilter('Filter_Plugin_MIP_ViewIndex_Begin');
 
+/**
+ * 是否允许内嵌的MIP主题运行
+ * 当检测到目前的主题启用了mip_active函数，则自动关闭此功能
+ */
 $mip_allow_self_theme_start = true;
+/**
+ * 当前运行模式是否为内嵌的MIP主题
+ */
+$mip_in_self_theme_mode = false;
+/**
+ * 当前是否运行于MIP模式下
+ */
+$mip_start = false;
+
 function ActivePlugin_mip() {
   global $zbp;
   Add_Filter_Plugin('Filter_Plugin_Index_Begin', 'mip_Index_Begin_For_API');
   Add_Filter_Plugin('Filter_Plugin_Index_Begin', 'mip_Index_Begin_For_Switch_To_MIP');
+  Add_Filter_Plugin('Filter_Plugin_Index_Begin', 'mip_Index_Begin_For_Header');
   Add_Filter_Plugin('Filter_Plugin_Post_Call', 'mip_Call_Get_MIP_URL');
-  $zbp->header .= '<link rel="canonical" href="' . htmlspecialchars(mip_theme_get_mip_url($zbp->fullcurrenturl)) . '" />';
 }
-function InstallPlugin_mip() {}
+function InstallPlugin_mip() {
+  $zbp->Config('mip')->enable_header_canonical = 1;
+  $zbp->Config('mip')->remove_all_plugin_headers = 1;
+  $zbp->SaveConfig('mip');
+}
 function UninstallPlugin_mip() {}
 
+/**
+ * MIP功能激活函数
+ * 进入此函数，即代表目前启用了MIP主题
+ */
 function mip_active ($allow_other_mip_template = false) {
-  global $zbp;
-  $zbp->header = ''; // 此处必须强制清空，以避免其他插件造成的影响
-  $zbp->footer = '';
+  global $zbp, $mip_start;
+  $mip_start = true;
   Add_Filter_Plugin('Filter_Plugin_Zbp_BuildTemplate', 'mip_Zbp_LoadTemplate');
   Add_Filter_Plugin('Filter_Plugin_ViewList_Template', 'mip_ViewList_Template');
   Add_Filter_Plugin('Filter_Plugin_ViewPost_Template', 'mip_ViewPost_Template');
   $GLOBALS['mip_allow_self_theme_start'] = $allow_other_mip_template;
-  if ($allow_other_mip_template) {
-    $zbp->header .= '<link rel="canonical" href="' . htmlspecialchars(mip_theme_get_original_url($zbp->fullcurrenturl)) . '" />';
-  } else {
-    $zbp->header .= '<link rel="canonical" href="' . htmlspecialchars($zbp->fullcurrenturl) . '" />';
-  }
 }
 
 function mip_theme_get_original_url ($url) {
@@ -47,12 +62,37 @@ function mip_Call_Get_MIP_URL(&$clazz, $method, $args) {
     $GLOBALS['hooks']['Filter_Plugin_Post_Call']['mip_Call_Get_MIP_URL'] = PLUGIN_EXITSIGNAL_RETURN;
     return mip_theme_get_original_url($clazz->Url);
   }
+}
 
+function mip_get_canonical_html ($url) {
+  return '<link rel="canonical" href="' . htmlspecialchars($url) . '" />';
+}
+
+function mip_Index_Begin_For_Header () {
+  global $zbp, $mip_start, $mip_in_self_theme_mode;
+  if ($mip_start) {
+    if ($zbp->Config('mip')->remove_all_plugin_headers == '1') {
+      $zbp->header = ''; // 此处必须强制清空，以避免其他插件造成的影响
+      $zbp->footer = '';
+    }
+    if ($mip_in_self_theme_mode) {
+      $zbp->header .= mip_get_canonical_html(mip_theme_get_original_url($zbp->fullcurrenturl));
+    } else {
+      if ($zbp->Config('mip')->enable_header_canonical == '1') {
+        $zbp->header .= mip_get_canonical_html($zbp->fullcurrenturl);
+      }
+    }
+  } else {
+    if ($zbp->Config('mip')->enable_header_canonical == '1') {
+      $zbp->header .= mip_get_canonical_html(mip_theme_get_mip_url($zbp->fullcurrenturl));
+    }
+  }
 }
 
 function mip_Index_Begin_For_Switch_To_MIP() {
-  global $zbp, $mip_allow_self_theme_start;
+  global $zbp, $mip_allow_self_theme_start, $mip_in_self_theme_mode;
   if (!$mip_allow_self_theme_start) return;
+  $mip_in_self_theme_mode = true;
   $uri = GetVars('REQUEST_URI', 'SERVER');
   $host = parse_url($zbp->host);
   $checkUri = str_replace($host['path'], '', $uri);
@@ -63,6 +103,7 @@ function mip_Index_Begin_For_Switch_To_MIP() {
 
 function mip_initialize_mip_page() {
   global $zbp, $bloghost;
+  mip_active(true);
   $bloghost .= 'mip/';
   $zbp->theme = 'mip';
   $zbp->template = $zbp->PrepareTemplate();
@@ -111,8 +152,6 @@ function mip_ViewIndex_Begin (&$url) {
   foreach ($GLOBALS['hooks']['Filter_Plugin_MIP_Template'] as $fpname => &$fpsignal) {
     $fpname($url);
   }
-
-  mip_active(true);
 }
 
 function mip_Index_Begin_For_API() {

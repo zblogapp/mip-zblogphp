@@ -5,7 +5,7 @@
 <url>https://www.zblogcn.com</url>
 <note>MIP支持插件</note>
 <description></description>
-<path></path>
+<path>main.php</path>
 <include>include.php</include>
 <level>1</level>
 <author>

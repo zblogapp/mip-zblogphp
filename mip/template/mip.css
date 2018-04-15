@@ -124,6 +124,7 @@ body>section{padding:0;}
 #main::after{display:block;font-size:0;}
 #main>section{margin:0;}
 article>section img{max-width:100%}
+}
 @media only screen and (max-width: 800px) {
 body{padding:20px 20px 30px}
 body>header{height:auto;}
