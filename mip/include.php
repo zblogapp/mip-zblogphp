@@ -30,6 +30,8 @@ function InstallPlugin_mip() {
   $zbp->Config('mip')->enable_header_canonical = 1;
   $zbp->Config('mip')->remove_all_plugin_headers = 1;
   $zbp->SaveConfig('mip');
+  mip_initialize_mip_page();
+  $zbp->template->BuildTemplate();
 }
 function UninstallPlugin_mip() {}
 
@@ -150,7 +152,7 @@ function mip_ViewIndex_Begin (&$url) {
     exit;
   }
   // Register all static template here
-  foreach ($GLOBALS['hooks']['Filter_Plugin_MIP_Template'] as $fpname => &$fpsignal) {
+  foreach ($GLOBALS['hooks']['Filter_Plugin_MIP_ViewIndex_Begin'] as $fpname => &$fpsignal) {
     $fpname($url);
   }
 }

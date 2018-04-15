@@ -25,6 +25,8 @@ if (count($_POST) > 0) {
     $zbp->Config('mip')->enable_header_canonical = $_POST['enable_header_canonical'];
     $zbp->Config('mip')->remove_all_plugin_headers = $_POST['remove_all_plugin_headers'];
 
+    mip_initialize_mip_page();
+    $zbp->template->BuildTemplate();
     $zbp->SaveConfig('mip');
     $zbp->SetHint('good');
     Redirect('./main.php');
