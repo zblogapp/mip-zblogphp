@@ -31,7 +31,7 @@ function fix_incorrect_url ($dom) {
 
 function remove_forbid_tags ($dom) {
   $replaceArray = array('img', 'video', 'audio', 'iframe', 'form');
-  $removeArray = array('frame', 'frameset', 'object', 'param', 'applet', 'embed', 'style');
+  $removeArray = array('frame', 'frameset', 'object', 'param', 'applet', 'embed', 'style', 'script');
   foreach ($replaceArray as $tag) {
     $items = $dom->find($tag);
     foreach ($items as $item) {

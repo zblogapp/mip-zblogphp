@@ -26,6 +26,7 @@ function ActivePlugin_mip() {
   Add_Filter_Plugin('Filter_Plugin_Post_Call', 'mip_Call_Get_MIP_URL');
 }
 function InstallPlugin_mip() {
+  global $zbp;
   $zbp->Config('mip')->enable_header_canonical = 1;
   $zbp->Config('mip')->remove_all_plugin_headers = 1;
   $zbp->SaveConfig('mip');
@@ -188,8 +189,13 @@ function mip_ViewList_Template  (&$template) {
     $article->Content = $contents['text'];
     $styles = $contents['style'];
   }
+  $copyrights = mip_html_format($template->GetTags('copyright'), $styles);
+  $styles = $copyrights['style'];
+  $copyright = $copyrights['text'];
   mip_format_sidebars($template, $styles);
+
   $template->SetTags('mipstyle', stylearray_to_css($styles));
+  $template->SetTags('copyright', $copyright);
 }
 
 
@@ -205,7 +211,11 @@ function mip_ViewPost_Template (&$template) {
   $article->Content = $contents['text'];
   $styles = $contents['style'];
   mip_format_sidebars($template, $styles);
+  $copyrights = mip_html_format($template->GetTags('copyright'), $styles);
+  $styles = $copyrights['style'];
+  $copyright = $copyrights['text'];
   $template->SetTags('mipstyle', stylearray_to_css($styles));
+  $template->SetTags('copyright', $copyright);
 }
 
 function mip_format_sidebars ($template, &$styles) {
