@@ -7,11 +7,26 @@ function mip_html_format ($content, $style = array()) {
   remove_forbid_tags($dom);
   format_tags($dom);
   format_html_styles($dom, $style);
+
+  if ($GLOBALS['mip_allow_self_theme_start']) {
+    fix_incorrect_url($dom);
+  }
+
   // remove styles
   return array(
     'text' => $dom->innertext,
     'style' => $style
   );
+}
+
+function fix_incorrect_url ($dom) {
+  $urlAttrs = array('src', 'href');
+  foreach ($urlAttrs as $attr) {
+    $items = $dom->find("[$attr]");
+    foreach ($items as $item) {
+      $item->$attr = str_replace('mip/', '', $item->$attr);
+    }
+  }
 }
 
 function remove_forbid_tags ($dom) {
