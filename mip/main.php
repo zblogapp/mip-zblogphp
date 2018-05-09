@@ -42,7 +42,7 @@ require $blogpath . 'zb_system/admin/admin_top.php';
   <div id="divMain2">
     <form id="edit" name="edit" method="post" action="#">
         <?php echo '<input type="hidden" name="csrfToken" value="' . $zbp->GetCSRFToken() . '">';?>
-
+        <p>如果您新安装了适配本插件的主题，点击“提交”即可激活。</p>
         <table border="1" class="tableFull tableBorder tableBorder-thcenter">
         <tr>
             <th class="td25"></th>

@@ -3,6 +3,7 @@
 RegisterPlugin("mip", "ActivePlugin_mip");
 DefinePluginFilter('Filter_Plugin_MIP_Template');
 DefinePluginFilter('Filter_Plugin_MIP_ViewIndex_Begin');
+require_once dirname(__FILE__) . '/mip_formatter.php';
 
 /**
  * 是否允许内嵌的MIP主题运行
@@ -20,8 +21,8 @@ $mip_start = false;
 
 function ActivePlugin_mip() {
   global $zbp;
-  Add_Filter_Plugin('Filter_Plugin_Index_Begin', 'mip_Index_Begin_For_API');
   Add_Filter_Plugin('Filter_Plugin_Index_Begin', 'mip_Index_Begin_For_Switch_To_MIP');
+  Add_Filter_Plugin('Filter_Plugin_Index_Begin', 'mip_Index_Begin_For_API');
   Add_Filter_Plugin('Filter_Plugin_Index_Begin', 'mip_Index_Begin_For_Header');
   Add_Filter_Plugin('Filter_Plugin_Post_Call', 'mip_Call_Get_MIP_URL');
 }
@@ -186,52 +187,34 @@ function mip_Zbp_LoadTemplate(&$templates) {
 function mip_ViewList_Template  (&$template) {
   global $zbp;
   $articles = $template->GetTags('articles');
-  require_once dirname(__FILE__) . '/html_format.php';
-  $styles = array();
+  $formatter = new MIP_Formatter();
   foreach ($articles as $article) {
-    $intros = mip_html_format($article->Intro, $styles);
-    $contents = mip_html_format($article->Content, $intros['style']);
-    $article->Intro = $intros['text'];
-    $article->Content = $contents['text'];
-    $styles = $contents['style'];
+    $article->Intro = $formatter->format($article->Intro);
+    $article->Content = $formatter->format($article->Content);
   }
-  $copyrights = mip_html_format($template->GetTags('copyright'), $styles);
-  $styles = $copyrights['style'];
-  $copyright = $copyrights['text'];
-  mip_format_sidebars($template, $styles);
-
-  $template->SetTags('mipstyle', stylearray_to_css($styles));
-  $template->SetTags('copyright', $copyright);
+  $template->SetTags('copyright', $formatter->format($template->GetTags('copyright')));
+  mip_format_sidebars($template, $formatter);
+  $template->SetTags('mipstyle', $formatter->css());
 }
-
 
 
 function mip_ViewPost_Template (&$template) {
   global $zbp;
   $article = $template->GetTags('article');
-  $styles = array();
-  require_once dirname(__FILE__) . '/html_format.php';
-  $intros = mip_html_format($article->Intro);
-  $contents = mip_html_format($article->Content, $intros['style']);
-  $article->Intro = $intros['text'];
-  $article->Content = $contents['text'];
-  $styles = $contents['style'];
-  mip_format_sidebars($template, $styles);
-  $copyrights = mip_html_format($template->GetTags('copyright'), $styles);
-  $styles = $copyrights['style'];
-  $copyright = $copyrights['text'];
-  $template->SetTags('mipstyle', stylearray_to_css($styles));
-  $template->SetTags('copyright', $copyright);
+  $formatter = new MIP_Formatter();
+  $article->Intro = $formatter->format($article->Intro);
+  $article->Content = $formatter->format($article->Content);
+  mip_format_sidebars($template, $formatter);
+  $template->SetTags('copyright', $formatter->format($template->GetTags('copyright')));
+  $template->SetTags('mipstyle', $formatter->css());
 }
 
-function mip_format_sidebars ($template, &$styles) {
+function mip_format_sidebars ($template, &$formatter) {
   $sidebarNames = array('sidebar', 'sidebar2', 'sidebar3', 'sidebar4', 'sidebar5');
   foreach ($sidebarNames as $sidebarName) {
     $sidebars = $template->GetTags($sidebarName);
     foreach ($sidebars as $sidebar) {
-      $ret = mip_html_format($sidebar->Content);
-      $sidebar->Content = $ret['text'];
-      array_merge($styles, $ret['style']);
+      $sidebar->Content = $formatter->format($sidebar->Content);
     }
   }
 }
