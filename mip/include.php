@@ -71,6 +71,10 @@ function mip_get_canonical_html ($url) {
   return '<link rel="canonical" href="' . htmlspecialchars($url) . '" />';
 }
 
+function mip_get_miphtml_html ($url) {
+  return '<link rel="miphtml" href="' . htmlspecialchars($url) . '" />';
+}
+
 function mip_Index_Begin_For_Header () {
   global $zbp, $mip_start, $mip_in_self_theme_mode;
   if ($mip_start) {
@@ -87,7 +91,7 @@ function mip_Index_Begin_For_Header () {
     }
   } else {
     if ($zbp->Config('mip')->enable_header_canonical == '1') {
-      $zbp->header .= mip_get_canonical_html(mip_theme_get_mip_url($zbp->fullcurrenturl));
+      $zbp->header .= mip_get_miphtml_html(mip_theme_get_mip_url($zbp->fullcurrenturl));
     }
   }
 }

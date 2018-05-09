@@ -1499,8 +1499,8 @@ class simple_html_dom
         // check self closing
         if ($this->copy_until_char_escape('>')==='/')
         {
-            $node->_[HDOM_INFO_ENDSPACE] .= '/';
-            $node->_[HDOM_INFO_END] = 0;
+            //$node->_[HDOM_INFO_ENDSPACE] .= '/';
+            $node->_[HDOM_INFO_END] = 1; // Disable fucking self-closing
         }
         else
         {
