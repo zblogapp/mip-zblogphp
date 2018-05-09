@@ -54,7 +54,7 @@ class MIP_Formatter {
         foreach ($urlAttrs as $attr) {
             $items = $dom->find("[$attr]");
             foreach ($items as $item) {
-                $item->$attr = amp_theme_get_original_url($item->$attr);
+                $item->$attr = mip_theme_get_original_url($item->$attr);
             }
         }
     }
