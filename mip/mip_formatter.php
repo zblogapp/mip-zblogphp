@@ -11,7 +11,7 @@ class MIP_Formatter {
      */
     public $warnings;
 
-    public function __construct($styles = [])
+    public function __construct($styles = array())
     {
         $this->styles = $styles;
     }
@@ -21,7 +21,7 @@ class MIP_Formatter {
      * @throws \Exception
      */
     public function format ($content) {
-        $dom = new \simple_html_dom();
+        $dom = new simple_html_dom();
         $dom->load($content);
         $this->removeForbidTags($dom);
         $this->formatTags($dom);

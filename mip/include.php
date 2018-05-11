@@ -3,7 +3,6 @@
 RegisterPlugin("mip", "ActivePlugin_mip");
 DefinePluginFilter('Filter_Plugin_MIP_Template');
 DefinePluginFilter('Filter_Plugin_MIP_ViewIndex_Begin');
-require_once dirname(__FILE__) . '/mip_formatter.php';
 
 /**
  * 是否允许内嵌的MIP主题运行
@@ -187,6 +186,7 @@ function mip_Zbp_LoadTemplate(&$templates) {
 function mip_ViewList_Template  (&$template) {
   global $zbp;
   $articles = $template->GetTags('articles');
+  require_once dirname(__FILE__) . '/mip_formatter.php';
   $formatter = new MIP_Formatter();
   foreach ($articles as $article) {
     $article->Intro = $formatter->format($article->Intro);
@@ -201,6 +201,7 @@ function mip_ViewList_Template  (&$template) {
 function mip_ViewPost_Template (&$template) {
   global $zbp;
   $article = $template->GetTags('article');
+  require_once dirname(__FILE__) . '/mip_formatter.php';
   $formatter = new MIP_Formatter();
   $article->Intro = $formatter->format($article->Intro);
   $article->Content = $formatter->format($article->Content);

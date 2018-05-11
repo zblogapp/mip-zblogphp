@@ -101,7 +101,8 @@ function file_get_html($url, $use_include_path = false, $context=null, $offset =
 			$pattern = "/^Location:\s*(.*)$/i";
 			$location_headers = preg_grep($pattern, $http_response_header);
 
-			if (!empty($location_headers) && preg_match($pattern, array_values($location_headers)[0], $matches)) {
+			$data = array_values($location_headers);
+			if (!empty($location_headers) && preg_match($pattern, $data[0], $matches)) {
 				// set the URL to that returned via the redirect header and repeat this loop
 				$url = $matches[1];
 				$repeat = true;
