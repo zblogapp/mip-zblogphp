@@ -3,6 +3,7 @@
 RegisterPlugin("mip", "ActivePlugin_mip");
 DefinePluginFilter('Filter_Plugin_MIP_Template');
 DefinePluginFilter('Filter_Plugin_MIP_ViewIndex_Begin');
+define('MIP_TEMPLATE_CSS_TAG', '<!--THIS IS TEMPLATE CSS FOR MIP-->');
 
 /**
  * 是否允许内嵌的MIP主题运行
@@ -43,8 +44,10 @@ function mip_active ($allow_other_mip_template = false) {
   global $zbp, $mip_start;
   $mip_start = true;
   Add_Filter_Plugin('Filter_Plugin_Zbp_BuildTemplate', 'mip_Zbp_LoadTemplate');
-  Add_Filter_Plugin('Filter_Plugin_ViewList_Template', 'mip_ViewList_Template');
-  Add_Filter_Plugin('Filter_Plugin_ViewPost_Template', 'mip_ViewPost_Template');
+  Add_Filter_Plugin('Filter_Plugin_ViewList_Template', 'mip_View_Template');
+  Add_Filter_Plugin('Filter_Plugin_ViewPost_Template', 'mip_View_Template');
+  Add_Filter_Plugin('Filter_Plugin_Index_End', 'mip_Index_End');
+
   $GLOBALS['mip_allow_self_theme_start'] = $allow_other_mip_template;
 }
 
@@ -183,39 +186,16 @@ function mip_Zbp_LoadTemplate(&$templates) {
   }
 }
 
-function mip_ViewList_Template  (&$template) {
-  global $zbp;
-  $articles = $template->GetTags('articles');
-  require_once dirname(__FILE__) . '/mip_formatter.php';
-  $formatter = new MIP_Formatter();
-  foreach ($articles as $article) {
-    $article->Intro = $formatter->format($article->Intro);
-    $article->Content = $formatter->format($article->Content);
-  }
-  $template->SetTags('copyright', $formatter->format($template->GetTags('copyright')));
-  mip_format_sidebars($template, $formatter);
-  $template->SetTags('mipstyle', $formatter->css());
+function mip_View_Template  (&$template) {
+  $template->SetTags('mipstyle', MIP_TEMPLATE_CSS_TAG);
 }
 
 
-function mip_ViewPost_Template (&$template) {
-  global $zbp;
-  $article = $template->GetTags('article');
+function mip_Index_End () {
   require_once dirname(__FILE__) . '/mip_formatter.php';
   $formatter = new MIP_Formatter();
-  $article->Intro = $formatter->format($article->Intro);
-  $article->Content = $formatter->format($article->Content);
-  mip_format_sidebars($template, $formatter);
-  $template->SetTags('copyright', $formatter->format($template->GetTags('copyright')));
-  $template->SetTags('mipstyle', $formatter->css());
-}
-
-function mip_format_sidebars ($template, &$formatter) {
-  $sidebarNames = array('sidebar', 'sidebar2', 'sidebar3', 'sidebar4', 'sidebar5');
-  foreach ($sidebarNames as $sidebarName) {
-    $sidebars = $template->GetTags($sidebarName);
-    foreach ($sidebars as $sidebar) {
-      $sidebar->Content = $formatter->format($sidebar->Content);
-    }
-  }
+  $content = $formatter->format(ob_get_contents());
+  ob_clean();
+  $content = str_replace(MIP_TEMPLATE_CSS_TAG, $formatter->css(), $content);
+  echo $content;
 }

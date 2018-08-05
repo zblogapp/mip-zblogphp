@@ -87,7 +87,7 @@ class MIP_Formatter {
         }
         return $dom;
     }
-    
+
     protected function removeForbidTags ($dom) {
       $replaceArray = array('img', 'video', 'audio', 'iframe', 'form');
       $removeArray = array('frame', 'frameset', 'object', 'param', 'applet', 'embed', 'style', 'script');
@@ -104,6 +104,15 @@ class MIP_Formatter {
       foreach ($removeArray as $tag) {
         $items = $dom->find($tag);
         foreach ($items as $item) {
+          if ($item->tag == 'script') {
+            if (preg_match('/c.mipcdn.com/si', $item->src)) {
+              continue;
+            }
+          } else if ($item->tag == 'style') {
+            if ($item->hasAttribute('mip-custom')) {
+              continue;
+            }
+          }
           $item->tag = 'p';
         }
       }
